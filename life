@@ -1,0 +1,63 @@
+#!/bin/bash
+
+usage=0
+avg=77
+while getopts 'mfhd:' i
+do 
+		case $i in
+			f)
+				avg=88
+				;;
+			m)
+				avg=77
+				;;
+			d)
+				avg=$OPTARG
+				;;
+			h)
+				usage=1
+				;;
+		esac
+done
+shift $((OPTIND-1))
+
+if [ $# -lt 1 ]
+then 
+	usage=1
+else 
+	date -d $1 '+%s' >/dev/null
+	if [ $? -ne 0 ];then usage=1;fi
+	barthday=$1
+fi
+
+if [ "$usage" -eq '1' ]
+then
+	echo 'life [-fmd<years>] <barthday>'
+	echo 'Shows remains of days of your life based on average span'
+	echo 'Also displays plotted time (LifeSpan->24hours)'
+	echo 'Options:'
+	echo '-m: male(77years/default)'
+	echo '-f: female(88years)'
+	echo '-d<years>: specify span'
+	echo 'Example:'
+	echo 'life -d 80 03/03/1990'
+	exit 1
+fi
+
+
+dob=$(date -d $barthday +%s)
+dod=$(perl -e 'print int('$dob'+'$avg'*365.2422*24*60*60)')
+cur=$(date +%s)
+remsec=$((dod-cur))
+remday=$((remsec/(86400)))
+pssec=$((cur-dob))
+psday=$((pssec/(86400)))
+
+ps=$((psday*100/(psday+remday)))
+dos=$(( 86400/4+86400/2*psday/(psday+remday)))
+hour=$((dos/3600))
+min=$((dos%3600/60))
+sec=$((dos%60))
+
+echo $psday days passed.$remday days left. $ps%. $(printf "%02d:%02d:%02d" $hour $min $sec).
+
