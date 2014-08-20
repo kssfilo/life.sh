@@ -54,7 +54,7 @@ pssec=$((cur-dob))
 psday=$((pssec/(86400)))
 
 ps=$((psday*100/(psday+remday)))
-dos=$(( 86400/4+86400/2*psday/(psday+remday)))
+dos=$(( 86400*psday/(psday+remday)))
 hour=$((dos/3600))
 min=$((dos%3600/60))
 sec=$((dos%60))
